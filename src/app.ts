@@ -16,7 +16,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
-app.use("/posts", postRouter);
+app.use("/api/v1", postRouter);
 
 app.get("/", async (req, res) => {
   res.send("Server working perfectly🙂");

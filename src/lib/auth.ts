@@ -95,9 +95,6 @@ export const auth = betterAuth({
     </div>
   `,
         });
-
-        console.log("Message sent:", info.messageId);
-        console.log("*****Email verification email send*****");
       } catch (error: any) {
         console.log(error.message);
       }

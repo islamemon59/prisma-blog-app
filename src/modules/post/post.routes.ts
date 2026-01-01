@@ -1,9 +1,15 @@
 import { Router } from "express";
 import { postController } from "./post.controller";
-import authMiddleware, { UserRole } from "../../auth/middleware";
+import authMiddleware, { UserRole } from "../../middleware/middleware";
 
-const router = Router()
+const router = Router();
 
-router.post("/", authMiddleware(UserRole.ADMIN, UserRole.USER), postController.createPost)
+router.get("/posts", postController.getAllPost);
+
+router.post(
+  "/posts",
+  authMiddleware(UserRole.ADMIN, UserRole.USER),
+  postController.createPost
+);
 
 export const postRouter = router;
