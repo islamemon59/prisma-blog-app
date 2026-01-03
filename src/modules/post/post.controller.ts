@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postServices } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import { number } from "better-auth/*";
+import paginationSortingHelper from "../../helpers/paginationSortingHelper";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -34,17 +35,18 @@ const getAllPost = async (req: Request, res: Response) => {
 
     const status = req.query.status as PostStatus;
 
-    const page = Number(req.query.page ?? 1);
-    const limit = Number(req.query.limit ?? 5);
-    const skip = (page - 1) * limit;
+    const {page, limit, skip, sortBy, sortOrder} = paginationSortingHelper(req.query)
+    
     const result = await postServices.getAllPost({
       search,
       tags,
       isFeatured,
       status,
-      page,
       limit,
       skip,
+      sortBy,
+      sortOrder,
+      page
     });
     res
       .status(200)
@@ -54,7 +56,22 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 };
 
+const getSinglePost = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    if(!id){
+      throw new Error("Post id is required")
+    }
+    console.log(id);
+    const result = await postServices.getSinglePost(id);
+    res.status(200).json({success: true, message: "Single post retrieved successful", data: result})
+  } catch (error: any) {
+    res.status(404).json({success: false, message: error.message})
+  }
+}
+
 export const postController = {
   createPost,
   getAllPost,
+  getSinglePost
 };

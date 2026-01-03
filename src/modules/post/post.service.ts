@@ -1,4 +1,4 @@
-import { boolean } from "better-auth/*";
+import { toASCII } from "node:punycode";
 import { Post, PostStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
@@ -22,17 +22,21 @@ const getAllPost = async ({
   tags,
   isFeatured,
   status,
-  page,
   limit,
   skip,
+  sortBy,
+  sortOrder,
+  page,
 }: {
   search: string | undefined;
   tags: string[] | [];
   isFeatured: boolean | undefined;
   status: PostStatus | undefined;
-  page: number;
   limit: number;
   skip: number;
+  sortBy: string;
+  sortOrder: string;
+  page: number;
 }) => {
   const andCondition: PostWhereInput[] = [];
 
@@ -86,12 +90,39 @@ const getAllPost = async ({
     where: {
       AND: andCondition,
     },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
   });
 
-  return result;
+  const total = await prisma.post.count({
+    where: {
+      AND: andCondition,
+    },
+  });
+
+  return {
+    data: result,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+const getSinglePost = async (id: string) => {
+  const result = await prisma.post.findUnique({
+    where: {
+      id,
+    },
+  });
+  return  result ;
 };
 
 export const postServices = {
   createPost,
   getAllPost,
+  getSinglePost,
 };

@@ -6,6 +6,8 @@ const router = Router();
 
 router.get("/posts", postController.getAllPost);
 
+router.get("/posts/:id", postController.getSinglePost);
+
 router.post(
   "/posts",
   authMiddleware(UserRole.ADMIN, UserRole.USER),
