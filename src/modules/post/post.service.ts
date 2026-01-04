@@ -1,5 +1,9 @@
 import { toASCII } from "node:punycode";
-import { Post, PostStatus } from "../../../generated/prisma/client";
+import {
+  CommentStatus,
+  Post,
+  PostStatus,
+} from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -90,6 +94,13 @@ const getAllPost = async ({
     where: {
       AND: andCondition,
     },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
     orderBy: {
       [sortBy]: sortOrder,
     },
@@ -133,13 +144,32 @@ const getSinglePost = async (id: string) => {
         comments: {
           where: {
             parentId: null,
+            status: CommentStatus.APPROVED,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
           include: {
             replies: {
+              where: {
+                status: CommentStatus.APPROVED,
+              },
+              orderBy: {
+                createdAt: "asc",
+              },
               include: {
-                replies: true,
+                replies: {
+                  where: {
+                    status: CommentStatus.APPROVED,
+                  },
+                },
               },
             },
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
           },
         },
       },
