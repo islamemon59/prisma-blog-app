@@ -114,7 +114,7 @@ const getAllPost = async ({
 
 const getSinglePost = async (id: string) => {
   return await prisma.$transaction(async (tx) => {
-    await prisma.post.update({
+    await tx.post.update({
       where: {
         id,
       },
@@ -125,9 +125,23 @@ const getSinglePost = async (id: string) => {
       },
     });
 
-    const result = await prisma.post.findUnique({
+    const result = await tx.post.findUnique({
       where: {
         id,
+      },
+      include: {
+        comments: {
+          where: {
+            parentId: null,
+          },
+          include: {
+            replies: {
+              include: {
+                replies: true,
+              },
+            },
+          },
+        },
       },
     });
     return result;
