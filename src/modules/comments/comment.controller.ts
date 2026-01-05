@@ -32,7 +32,9 @@ const getCommentById = async (req: Request, res: Response) => {
 const getCommentByAuthorId = async (req: Request, res: Response) => {
   try {
     const { authorId } = req.params;
-    const result = await commentServices.getCommentByAuthorId(authorId as string);
+    const result = await commentServices.getCommentByAuthorId(
+      authorId as string
+    );
     res.status(200).json({
       success: true,
       message: "Comment retrieved successfully",
@@ -43,8 +45,25 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
   }
 };
 
+const deleteComment = async (req: Request, res: Response) => {
+  try {
+    const authorId = req.user?.id;
+    const { commentId } = req.params;
+    const result = await commentServices.deleteComment(
+      commentId as string,
+      authorId as string
+    );
+    res
+      .status(200)
+      .json({ success: true, message: "Comment Deleted", data: result });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
 export const commentController = {
   createComment,
   getCommentById,
   getCommentByAuthorId,
+  deleteComment,
 };
