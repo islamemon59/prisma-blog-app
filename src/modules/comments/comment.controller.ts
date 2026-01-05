@@ -5,13 +5,39 @@ const createComment = async (req: Request, res: Response) => {
   try {
     req.body.authorId = req.user?.id;
     const result = await commentServices.createComment(req.body);
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Comment created successfully",
-        data: result,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Comment created successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+const getCommentById = async (req: Request, res: Response) => {
+  try {
+    const { commentId } = req.params;
+    const result = await commentServices.getCommentById(commentId as string);
+    res.status(200).json({
+      success: true,
+      message: "Comment retrieved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+const getCommentByAuthorId = async (req: Request, res: Response) => {
+  try {
+    const { authorId } = req.params;
+    const result = await commentServices.getCommentByAuthorId(authorId as string);
+    res.status(200).json({
+      success: true,
+      message: "Comment retrieved successfully",
+      data: result,
+    });
   } catch (error: any) {
     res.status(404).json({ success: false, message: error.message });
   }
@@ -19,4 +45,6 @@ const createComment = async (req: Request, res: Response) => {
 
 export const commentController = {
   createComment,
+  getCommentById,
+  getCommentByAuthorId,
 };
