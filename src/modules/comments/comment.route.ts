@@ -22,6 +22,12 @@ router.post(
   commentController.createComment
 );
 
+router.patch(
+  "/comments/:commentId",
+  authMiddleware(UserRole.ADMIN, UserRole.USER),
+  commentController.updateComment
+);
+
 router.delete(
   "/comments/:commentId",
   authMiddleware(UserRole.ADMIN, UserRole.USER),
