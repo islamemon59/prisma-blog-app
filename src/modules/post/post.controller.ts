@@ -34,8 +34,10 @@ const getAllPost = async (req: Request, res: Response) => {
 
     const status = req.query.status as PostStatus;
 
-    const {page, limit, skip, sortBy, sortOrder} = paginationSortingHelper(req.query)
-    
+    const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelper(
+      req.query
+    );
+
     const result = await postServices.getAllPost({
       search,
       tags,
@@ -45,7 +47,7 @@ const getAllPost = async (req: Request, res: Response) => {
       skip,
       sortBy,
       sortOrder,
-      page
+      page,
     });
     res
       .status(200)
@@ -58,18 +60,63 @@ const getAllPost = async (req: Request, res: Response) => {
 const getSinglePost = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
-    if(!id){
-      throw new Error("Post id is required")
+    if (!id) {
+      throw new Error("Post id is required");
     }
     const result = await postServices.getSinglePost(id);
-    res.status(200).json({success: true, message: "Single post retrieved successful", data: result})
+    res.status(200).json({
+      success: true,
+      message: "Single post retrieved successful",
+      data: result,
+    });
   } catch (error: any) {
-    res.status(404).json({success: false, message: error.message})
+    res.status(404).json({ success: false, message: error.message });
   }
-}
+};
+
+const getMyPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("Your are unauthorized");
+    }
+    const result = await postServices.getMyPost(user?.id as string);
+    res.status(200).json({
+      success: true,
+      message: "Post retrieved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("Your are unauthorized");
+    }
+    const { postId } = req.params;
+    const result = await postServices.updatePost(
+      postId as string,
+      req.body,
+      user.id
+    );
+    res.status(200).json({
+      success: true,
+      message: "Post update successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
 
 export const postController = {
   createPost,
   getAllPost,
-  getSinglePost
+  getSinglePost,
+  getMyPost,
+  updatePost,
 };

@@ -178,8 +178,73 @@ const getSinglePost = async (id: string) => {
   });
 };
 
+const getMyPost = async (authorId: string) => {
+  await prisma.user.findFirstOrThrow({
+    where: {
+      id: authorId,
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const result = await prisma.post.findMany({
+    where: {
+      authorId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+
+  const total = await prisma.post.aggregate({
+    _count: {
+      id: true,
+    },
+  });
+
+  return { result, total };
+};
+
+const updatePost = async (
+  id: string,
+  data: Partial<Post>,
+  authorId: string
+) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+
+  if (postData.authorId !== authorId) {
+    throw new Error("Your are not owner of this post");
+  }
+
+  return await prisma.post.update({
+    where: {
+      id,
+    },
+    data,
+  });
+};
+
 export const postServices = {
   createPost,
   getAllPost,
   getSinglePost,
+  getMyPost,
+  updatePost
 };
