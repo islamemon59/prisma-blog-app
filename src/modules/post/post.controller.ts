@@ -6,7 +6,6 @@ import paginationSortingHelper from "../../helpers/paginationSortingHelper";
 
 const createPost = async (req: Request, res: Response) => {
   try {
-    console.log(req.user);
     const user = req.user;
     if (!user?.id) {
       return res
@@ -62,7 +61,6 @@ const getSinglePost = async (req: Request, res: Response) => {
     if(!id){
       throw new Error("Post id is required")
     }
-    console.log(id);
     const result = await postServices.getSinglePost(id);
     res.status(200).json({success: true, message: "Single post retrieved successful", data: result})
   } catch (error: any) {
