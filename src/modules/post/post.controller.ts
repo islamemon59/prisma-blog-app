@@ -128,13 +128,23 @@ const deletePost = async (req: Request, res: Response) => {
       isAdmin
     );
 
+    res.status(200).json({
+      success: true,
+      message: "Post delete successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+const getStats = async (req: Request, res: Response) => {
+  try {
+    const result = await postServices.getStats();
+    console.log("controller");
     res
       .status(200)
-      .json({
-        success: true,
-        message: "Post delete successfully",
-        data: result,
-      });
+      .json({ success: false, message: "Stats retrieved successfully", stats: result });
   } catch (error: any) {
     res.status(404).json({ success: false, message: error.message });
   }
@@ -146,5 +156,6 @@ export const postController = {
   getSinglePost,
   getMyPost,
   updatePost,
-  deletePost
+  deletePost,
+  getStats
 };
