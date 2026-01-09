@@ -3,6 +3,7 @@ import { postServices } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import { number } from "better-auth/*";
 import paginationSortingHelper from "../../helpers/paginationSortingHelper";
+import { UserRole } from "../../middleware/middleware";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -94,14 +95,17 @@ const getMyPost = async (req: Request, res: Response) => {
 const updatePost = async (req: Request, res: Response) => {
   try {
     const user = req.user;
+    console.log(user)
     if (!user) {
       throw new Error("Your are unauthorized");
     }
     const { postId } = req.params;
+    const isAdmin = req.user?.role === UserRole.ADMIN
     const result = await postServices.updatePost(
       postId as string,
       req.body,
-      user.id
+      user.id,
+      isAdmin
     );
     res.status(200).json({
       success: true,
