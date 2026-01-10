@@ -54,7 +54,7 @@ const getAllPost = async (req: Request, res: Response) => {
       .status(200)
       .json({ success: true, message: "Data retrieved success", data: result });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
@@ -71,7 +71,7 @@ const getSinglePost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
@@ -88,7 +88,7 @@ const getMyPost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
@@ -113,7 +113,7 @@ const updatePost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
@@ -134,7 +134,7 @@ const deletePost = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
@@ -146,7 +146,7 @@ const getStats = async (req: Request, res: Response) => {
       .status(200)
       .json({ success: false, message: "Stats retrieved successfully", stats: result });
   } catch (error: any) {
-    res.status(404).json({ success: false, message: error.message });
+    res.status(404).json({ success: false, message: error });
   }
 };
 
